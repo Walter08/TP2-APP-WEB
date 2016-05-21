@@ -7,8 +7,10 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Welcome</div>
 
-                <div class="panel-body">
-                    Your Application's Landing Page.
+                <div class="panel-body content_portada">
+                    Bienvenidos a Plantillas de manera easy!
+                    <div class="clear"></div>
+                    <img src="img/portada.jpg" alt="Portada del sitio" class="img-rounded portada"></img>
                 </div>
             </div>
         </div>

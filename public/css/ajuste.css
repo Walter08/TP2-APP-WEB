@@ -1,0 +1,32 @@
+.texto {
+    font-size: 15px;
+    line-height: 20px;
+    font-family: courier;
+    color: #333;
+}
+form input[type=text], div.fake_form {
+    background: #eee;
+    line-height: 15px;
+    border: 0;
+    border-bottom: 1px dotted #888;
+    color: #333;
+}
+
+form input[type=text].inputted {
+    color: #ff0000;
+    border-bottom: 0;
+    background: transparent;
+}
+
+div.fake_form {
+    display: inline-block;
+    visibility: collapse;
+}
+
+.contenedor{
+    width: 60%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
