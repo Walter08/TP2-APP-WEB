@@ -14,13 +14,15 @@
                 <div class="panel-body">
                     @foreach ($resultados as $r)
                            <div class="panel panel-success">
-                                <h4 class="alert alert-success flex_der" role="alert">{{ $r->titulo }}
-                                <button type="button" class="btn btn-success flex_der" data-toggle="modal" data-target="#myModal">
+                                <?php $data = '#myModal'.$r->id ?>
+                                <h4 class="alert alert-success flex_der" role="alert">{{ $r->id }}: {{ $r->titulo }}
+                                <button type="button" class="btn btn-success flex_der" data-toggle="modal" data-target="{{$data}}">
                                   <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>Ver plantilla
                                 </button>
                                 </h4>
                                 <!-- Modal -->
-                                <div id="myModal" class="modal fade" role="dialog">
+                                <?php $d = 'myModal'.$r->id ?>
+                                <div id="{{$d}}" class="modal fade" role="dialog">
                                   <div class="modal-dialog">
                                     <!-- Modal content-->
                                     <div class="modal-content">
@@ -29,7 +31,7 @@
                                         <h4 class="modal-title">{{ $r->id }} : {{ $r->titulo }}</h4>
                                       </div>
                                       <div class="modal-body">
-                                        <p id="modal_cuerpo">{{$r->cuerpo}}</p>
+                                        <p>{{$r->cuerpo}}</p>
                                       </div>
                                       <div class="modal-footer">
                                         <?php $url = 'template/'.$r->id ?>
@@ -39,7 +41,6 @@
                                   </div>
                                 </div>
                             </div>
-                        
                     @endforeach
                 </div>
                 {!! $resultados->render() !!}

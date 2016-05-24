@@ -20,6 +20,12 @@ class TemplateSeeder extends Seeder
         ]);
 
         Template::create([
+            'titulo' => 'Invitacion a casamiento',
+            'cuerpo' => 'Te invito a mi casamiento el dia {{fecha}} en {{lugar}} a las {{hora}} hs. {{nombre}}',
+            'categoria' => 'Invitacion'
+        ]);
+
+        Template::create([
             'titulo' 	=>	'Solitud de reincorporacion',
             'cuerpo'	=>	'<fecha> <lugar> Sres Facultad de Ingenieria\n\t Solicito a ustedes la
              reincoporacion a la carrera de Licenciatura en Sistemas.\n Sin mas, los saludo atentamente.\n\t <Nombre>',

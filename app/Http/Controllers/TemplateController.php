@@ -44,6 +44,35 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         //
+        $nombre = $request->input('nombre');
+        $fecha = $request->input('fecha');
+        $lugar = $request->input('lugar');
+        $hora = $request->input('hora');
+        $path = explode('/', $request->path());
+        $id = $path[1];
+            
+        $template = Template::find($id);
+
+        $resultado = str_replace ( "{{nombre}}", $nombre, $template['cuerpo']);
+        $resultado = str_replace ( "{{fecha}}", $fecha, $resultado);
+        $resultado = str_replace ( "{{lugar}}", $lugar, $resultado);
+        $resultado = str_replace ( "{{hora}}", $hora, $resultado);
+
+        Fpdf::AddPage();
+        Fpdf::SetFont('Arial','B',15);
+        // Movernos a la derecha
+        Fpdf::Cell(80);
+        // Título
+        Fpdf::Cell(30,10,utf8_decode($template['titulo']),0,0,'C');
+        // Salto de línea
+        Fpdf::Ln(20);
+        Fpdf::SetFont('Arial','B',12);
+        Fpdf::Multicell(0,8, utf8_decode($resultado));
+        $nombre = 'template'.$template['id'].'.pdf';
+        $ruta = 'pdfs/'.$nombre;
+        Fpdf::Output($ruta);
+        Fpdf::Output();
+        exit;
     }
 
     /**
@@ -59,6 +88,27 @@ class TemplateController extends Controller
         // // $cuerpo_template = Template::where('id', $id)->get('cuerpo');
         // // $cuerpo = explode('</^([a-z]-?){1,}>', $cuerpo_template->cuerpo);
         // return view('plantillas.usarTemplate', ['template' => $template]);
+        $inputNombre = "<input id=\"nombre\" type=\"text\" name=\"nombre\" value=\"Nombre\">";
+            $inputFecha = "<input id=\"fecha\" type=\"text\" name=\"fecha\" value=\"Fecha del evento\">";
+            $inputLugar = "<input id=\"lugar\" type=\"text\" name=\"lugar\" value=\"Lugar del evento\">";
+            $inputHora = "<input id=\"hora\" type=\"text\" name=\"hora\" value=\"Hora del evento\">";
+
+            $template = Template::find($id);
+
+            if (!is_null($template)){
+
+                $resultado = str_replace ( "{{nombre}}", $inputNombre, $template['cuerpo']);
+                $resultado = str_replace ( "{{fecha}}", $inputFecha, $resultado);
+                $resultado = str_replace ( "{{lugar}}", $inputLugar, $resultado);
+                $resultado = str_replace ( "{{hora}}", $inputHora, $resultado);
+
+                return View ('plantillas.template', ['texto' => $resultado, 'id' => $id]);
+            }
+
+            else {
+
+                return response('Plantilla no encontrada', 404);
+            }
     }
 
     /**
@@ -144,67 +194,43 @@ class TemplateController extends Controller
         return view('plantillas.listadoCategoria', ['titulo' => $titulo,'resultados' => $resultados]);
     }
 
-    public function getTemplate(Request $request, $id)
+    /**
+     * Genera PDF del Template para imprimir
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function generaPDF(Request $request)
     {
-        if ($request->isMethod("post")){
+        //
+        $nombre = $request->input('nombre');
+        $fecha = $request->input('fecha');
+        $lugar = $request->input('lugar');
+        $hora = $request->input('hora');
+        $path = explode('/', $request->path());
+        $id = $path[1];
             
-            $nombre = $request->input('nombre');
-            $fecha = $request->input('fecha');
-            $lugar = $request->input('lugar');
-            $hora = $request->input('hora');
-            
-            $template = Template::find($id);
-            
-             if (!is_null($template)){
+        $template = Template::find($id);
 
-                $resultado = str_replace ( "{{nombre}}", $nombre, $template['cuerpo']);
-                $resultado = str_replace ( "{{fecha}}", $fecha, $resultado);
-                $resultado = str_replace ( "{{lugar}}", $lugar, $resultado);
-                $resultado = str_replace ( "{{hora}}", $hora, $resultado);
+        $resultado = str_replace ( "{{nombre}}", $nombre, $template['cuerpo']);
+        $resultado = str_replace ( "{{fecha}}", $fecha, $resultado);
+        $resultado = str_replace ( "{{lugar}}", $lugar, $resultado);
+        $resultado = str_replace ( "{{hora}}", $hora, $resultado);
 
-                Fpdf::AddPage();
-                Fpdf::SetFont('Arial','B',15);
-                // Movernos a la derecha
-                Fpdf::Cell(80);
-                // Título
-                Fpdf::Cell(30,10,utf8_decode($template['titulo']),0,0,'C');
-                // Salto de línea
-                Fpdf::Ln(20);
-                Fpdf::SetFont('Arial','B',12);
-                Fpdf::Multicell(0,8, utf8_decode($resultado));
-                Fpdf::Output();
-                exit;
-
-            }
-            else {
-                return response('Plantilla no encontrada', 404);
-            }
-
-
-        }else{
-            
-            $inputNombre = "<input type=\"text\" name=\"nombre\" value=\"Nombre\">";
-            $inputFecha = "<input type=\"text\" name=\"fecha\" value=\"Fecha del evento\">";
-            $inputLugar = "<input type=\"text\" name=\"lugar\" value=\"Lugar del evento\">";
-            $inputHora = "<input type=\"text\" name=\"hora\" value=\"Hora del evento\">";
-
-            $template = Template::find($id);
-
-            if (!is_null($template)){
-
-                $resultado = str_replace ( "{{nombre}}", $inputNombre, $template['cuerpo']);
-                $resultado = str_replace ( "{{fecha}}", $inputFecha, $resultado);
-                $resultado = str_replace ( "{{lugar}}", $inputLugar, $resultado);
-                $resultado = str_replace ( "{{hora}}", $inputHora, $resultado);
-
-                return View ('plantillas.template', ['texto' => $resultado]);
-            }
-
-            else {
-
-                return response('Plantilla no encontrada', 404);
-            }
-        }
-
+        Fpdf::AddPage();
+        Fpdf::SetFont('Arial','B',15);
+        // Movernos a la derecha
+        Fpdf::Cell(80);
+        // Título
+        Fpdf::Cell(30,10,utf8_decode($template['titulo']),0,0,'C');
+        // Salto de línea
+        Fpdf::Ln(20);
+        Fpdf::SetFont('Arial','B',12);
+        Fpdf::Multicell(0,8, utf8_decode($resultado));
+        $nombre = 'template'.$template['id'].'.pdf';
+        $ruta = 'pdfs/'.$nombre;
+        //Fpdf::Output($ruta);
+        Fpdf::Output();
+        exit;
     }
 }

@@ -19,7 +19,8 @@
 
     
    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-   <link href="css/style.css" rel="stylesheet">
+   <link href="/css/style.css" rel="stylesheet" type='text/css'>
+   <link href="/css/ajuste.css" rel="stylesheet" type='text/css'>
    
 </head>
 <body id="app-layout">
@@ -37,14 +38,14 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Laravel
+                    Inicio
                 </a>
             </div>
 
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url('/home') }}">Home</a></li>
+                    <li><a href="{{ url('/home') }}">Plantillas</a></li>
                 </ul>
 
                <form class="navbar-form navbar-left" role="search">
@@ -82,7 +83,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js" integrity="sha384-I6F5OKECLVtK/BL+8iSLDEHowSAfUo76ZL9+kGAgTRdiByINKJaqTPH/QVNS1VDb" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
-    <script src="{{ elixir('js/ajustar.js')" ></script>
+    <!--<script src="{{ elixir('js/ajustar.js')" ></script>-->
+    <script src="js/ajustar.js"></script>
+    <script src="js/html2canvas.js"></script>
+    <script src="js/scripts.js"></script>
 
     <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
