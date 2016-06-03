@@ -1,29 +1,32 @@
 body {
     font-family: 'Lato';
 }
-
-.fa-btn {
+/*.fa-btn {
     margin-right: 6px;
-}
+}*/
 
+/*#content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  #display: table;
+  #vertical-align: middle;
+  #text-align: center;
+  #font-size: 150%;
+  color: white;
+  font-weight: bold;
+}*/
 .clear {
     clear: both;
 }
-
-/*.portada {
-    width: 80%;
-    #margin-right: 40%;
-}
-
-content_portada {
-    text-align: center;
-}*/
-/*
-.alinear_der{
-    text-align:right;
-}*/
-
 .flex_der{
     display: flex;
     justify-content:space-between;
+}
+@font-face{ 
+    font-family: 'MoonBold';
+    src: url('../fonts/Moon/MoonBold.otf');
+}
+.fuente{
+  font-family: "MoonBold";
 }

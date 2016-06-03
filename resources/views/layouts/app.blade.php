@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>@yield('title')</title>
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
@@ -20,7 +20,7 @@
     
    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
    <link href="/css/style.css" rel="stylesheet" type='text/css'>
-   <link href="/css/ajuste.css" rel="stylesheet" type='text/css'>
+   <link rel="stylesheet" href="/css/stylesheet.css" type="text/css" charset="utf-8" />
    
 </head>
 <body id="app-layout">
@@ -37,25 +37,33 @@
                 </button>
 
                 <!-- Branding Image -->
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand fuente" href="{{ url('/') }}">
                     Inicio
                 </a>
             </div>
 
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
-                <ul class="nav navbar-nav">
-                    <li><a href="{{ url('/home') }}">Plantillas</a></li>
+                <ul class="nav navbar-nav fuente dropdown">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            Plantillas <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu fuente" role="menu">
+                            <li><a href="{{ url('/home') }}"><i class="fa fa-btn fa-sign-out"></i> Categorias</a></li>
+                            <li><a href="{{ url('/misNotas') }}"><i class="fa fa-btn fa-sign-out"></i> Mis Notas Creadas</a></li>
+                        </ul>
+                    </li>
                 </ul>
 
-               <form class="navbar-form navbar-left" role="search">
+               <form class="navbar-form navbar-left" role="search" action="{{url('/sugerencias')}}">
                 <div class="form-group">
-                  <input class="form-control" placeholder="Search" type="search">
+                  <input class="form-control" placeholder="Descripcion plantilla" type="search" name="descripcion">
                 </div>
-                <button type="submit" class="btn btn-default">Submit</button>
+                <button type="submit" class="btn btn-default fuente">Buscar</button>
                </form>
                 <!-- Right Side Of Navbar -->
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right fuente">
                     <!-- Authentication Links -->
                     @if (Auth::guest())
                         <li><a href="{{ url('/login') }}">Identificarse</a></li>
@@ -66,8 +74,8 @@
                                 {{ Auth::user()->name }} <span class="caret"></span>
                             </a>
 
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+                            <ul class="dropdown-menu fuente" role="menu">
+                                <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i> Logout</a></li>
                             </ul>
                         </li>
                     @endif
@@ -84,7 +92,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
     <!--<script src="{{ elixir('js/ajustar.js')" ></script>-->
-    <script src="js/ajustar.js"></script>
+    
     <script src="js/html2canvas.js"></script>
     <script src="js/scripts.js"></script>
 

@@ -1,74 +1,129 @@
 @extends('layouts.app')
-
+@section('title', 'Editar plantilla')
 @section('content')
+<link href='/css/ajuste.css' rel="stylesheet">
+<link rel="stylesheet" href="/css/bootstrap3-wysihtml5.min.css">
+<link rel="stylesheet" href="/css/jquery.timepicker.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <div class="container">
     <div class="row">
         <div class="col-md-7 col-md-offset-3">
             <div class="panel panel-default">
-                <div class="panel-heading">Vista de Plantilla</div>
-                <?php 
-                    $url = 'template/'.$id."/pdf";
-                    $url2 =  'template/'.$id;
-                 ?>
-                <form method="post" action="{{url($url)}}"> 
-                    <div class="panel-body texto">
-                        <p> <?php echo $texto ?> </p>
-                    </div>
-                    <button class="btn btn-success" type="submit">Generar PDF</button>
-                </form>
-                <form method="post" action="{{url($url2)}}">
-                    <button class="btn btn-success" type="submit">Enviar por correo</button>
-                </form>
-
-                    <div class="panel-body col-md-offset-2">
+                <div class="panel-heading">Mensaje</div>
                         
-                        <!-- <button class="btn btn-success" type="submit">Generar PDF</button> -->
-                        
-                        <!-- <a id="btnPDF" class="btn btn-default" onclick="generarPDF({{$id}})">Generar PDF</a> -->
-                        
-                        <button class="btn btn-success">Enviarmelo por correo</button>
-                        <button class="btn btn-success" data-toggle="modal" data-target="#myModal">Enviar PDF a un amigo</button>
-
-                        <!-- Modal -->
-                        <div id="myModal" class="modal fade" role="dialog">
-                            <div class="modal-dialog">
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title" data-dismiss="modal">Enviar PDF por correo</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- <form class="form-horizontal" role="form" method="POST" action="{{ url('/mail') }}">
-                                            {!! csrf_field() !!} --> 
-                                            <div class="panel panel-success">
-                                                <label class="col-md-4 control-label">Correo Electr&oacute;nico</label>
-                                                <div class="col-md-6">
-                                                    <input type="email" class="form-control" name="email" value="">
-                                                </div>
-                                            </div>
-                                            <div class="">
-                                                <label class="col-md-4 control-label">Mensaje adjunto al correo</label>
-                                                <div class="col-md-6">
-                                                    <input type="text" class="form-control" name="mensaje" value="">
-                                                </div>
-                                            </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                            <div class="">
-                                                <div class="col-md-6 col-md-offset-4">
-                                                    <a href="{{ url('/mail') }}" class="btn btn-default">Enviar</a>
-                                                </div>
-                                            </div>
-                                        <!-- </form> -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="panel-body texto">
+                    <p> <?php echo $texto ?> </p>
+                </div>
+                
+                <div class="panel-body col-md-offset-2">
+                    <button class="btn btn-success" id="pdf">Descargar PDF</button>
+                    <button class="btn btn-success" onclick="mostrarModal()">Enviar PDF</button>
+                    <button class="btn btn-success" onclick="guardarPdf({{$id}})">Guardar PDF</button>
+                </div>
                 
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Enviar PDF</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="message-text" class="control-label">Enviar a:</label>
+            <input type="email" id="email" class="form-control" name="email" id="message-text" required placeholder="Para:">
+          </div>
+          <div class="form-group">
+            <input class="form-control" placeholder="Asunto:" id="asunto" name="asunto">
+          </div>
+          <div class="form-group">
+            <textarea id="contenido_mail" name="contenido_mail" class="form-control" style="height: 200px" placeholder="escriba aquí..."> </textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="enviarPdf({{$id}})">Enviar Mail</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/jquery-1.6.2.min.js"></script>
+<script src="/js/ajustar.js"></script>
+<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+<script src="/js/jquery.timepicker.min.js"></script>
+<!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="/js/bootstrap3-wysihtml5.all.min.js"></script>
+<script>
+    
+    $(document).ready(function()
+    {
+    $("#pdf").click(function(){
+        var form = '';
+        $("input[type=text]").each(function (){
+            var valor = $(this).val();
+            var nombre = $(this).attr("name");
+            form += '<input type="text" name="'+nombre+'" value="'+valor+'">';
+        });
+        $('<form method="POST">'+form+'</form>').submit();
+    });
+    });
+        
+    //$(function() {
+        $('#hora').timepicker({ 'timeFormat': 'h:i A' });
+    //});
+
+  //$(function() {
+    $( "#fecha" ).datepicker();
+  //});
+
+    function mostrarModal(){
+        $('#myModal').modal('show');
+    };
+    
+    function enviarPdf(id){
+        var form = '';
+        $("input[type=text]").each(function (){
+            var valor = $(this).val();
+            var nombre = $(this).attr("name");
+            form += '<input type="text" name="'+nombre+'" value="'+valor+'">';
+        });
+        valor = $("#email").val();
+        form += '<input type="email" name="email" value="'+valor+'">';
+        valor =$("#asunto").val();
+        form += '<input type="text" name="asunto" value="'+valor+'">';
+        valor =$('#contenido_mail').val();
+        form += '<textarea name="contenido_mail" id="contenido_mail">'+valor+'</textarea>';
+        form += '<input type="number" name="id" value="'+id+'">';
+        $('<form method="POST" action="{{url('/enviarpdf')}}">'+form+'</form>').submit();
+    };
+    
+    function guardarPdf(id){
+        var form = '';
+        $("input[type=text]").each(function (){
+            var valor = $(this).val();
+            var nombre = $(this).attr("name");
+            form += '<input type="text" name="'+nombre+'" value="'+valor+'">';
+        });
+        
+        form += '<input type="number" name="id" value="'+id+'">';
+        $('<form method="POST" action="{{url('/guardarpdf')}}">'+form+'</form>').submit();
+    };
+    
+    function activareditor(){   
+        $("#contenido_mail").wysihtml5();
+      };
+
+      activareditor();
+
+</script>
 @endsection

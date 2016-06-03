@@ -18,6 +18,7 @@ class CreateTemplatesTable extends Migration
             $table->string('titulo', 100);
             $table->text('cuerpo');
             $table->string('categoria', 40);
+            $table->text('tags');
             $table->timestamps();
         });
     }

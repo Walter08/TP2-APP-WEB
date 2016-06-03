@@ -1,28 +1,58 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Template;
-use Anouar\Fpdf\Facades\Fpdf;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;
+use Illuminate\Http\Request;
+use App\Template;
+use Anouar\Fpdf\Facades\Fpdf;
+use Session;
+use App\Nota;
+use Redirect;
+use Auth;
+
 
 class TemplateController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Create a new controller instance.
      *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
+    /**
+     * Display a listing of the resource.
+     * Funcion para buscar y devolver los templates
+     * que tengan algun tag que coincida con el de busqueda
+     * Resuelvo la busqueda
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        //dd($request->input('descripcion'));
+        $descripcion = $request->input('descripcion');
+        $titulo = 'Sugerencias de Plantillas';
+
+        $templates = Template::all();
+        $resultados = collect([]);
+
+        foreach ($templates as $template) {
+            $tags = explode(',', $template['tags']);
+            if (in_array($descripcion, $tags)) {
+                $resultados->push($template);
+            };
+        };
+        return view('plantillas.resultadosBusqueda', ['titulo' => $titulo,'resultados' => $resultados]);
     }
 
     /**
@@ -43,36 +73,58 @@ class TemplateController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $nombre = $request->input('nombre');
-        $fecha = $request->input('fecha');
-        $lugar = $request->input('lugar');
-        $hora = $request->input('hora');
-        $path = explode('/', $request->path());
-        $id = $path[1];
+        if ($request->isMethod("post")){
             
-        $template = Template::find($id);
+            $id = $request->input("id");
+                
+            $template = Template::find($id);
+            
+            if (!is_null($template)){
 
-        $resultado = str_replace ( "{{nombre}}", $nombre, $template['cuerpo']);
-        $resultado = str_replace ( "{{fecha}}", $fecha, $resultado);
-        $resultado = str_replace ( "{{lugar}}", $lugar, $resultado);
-        $resultado = str_replace ( "{{hora}}", $hora, $resultado);
+                preg_match_all('/\{\{([a-zA-Z0-9]+)\}\}/', $template['cuerpo'], $coincidencias);
+                $resultado = $template['cuerpo'];
+                $data = '';
 
-        Fpdf::AddPage();
-        Fpdf::SetFont('Arial','B',15);
-        // Movernos a la derecha
-        Fpdf::Cell(80);
-        // Título
-        Fpdf::Cell(30,10,utf8_decode($template['titulo']),0,0,'C');
-        // Salto de línea
-        Fpdf::Ln(20);
-        Fpdf::SetFont('Arial','B',12);
-        Fpdf::Multicell(0,8, utf8_decode($resultado));
-        $nombre = 'template'.$template['id'].'.pdf';
-        $ruta = 'pdfs/'.$nombre;
-        Fpdf::Output($ruta);
-        Fpdf::Output();
-        exit;
+                for ($i = 0; $i < count($coincidencias[0]); $i++) {
+                    $aux = $request->input($coincidencias[1][$i]);
+                    $resultado = str_replace ($coincidencias[0][$i], $aux, $resultado);
+                    $data = $data.$coincidencias[0][$i].'='.$aux.',';
+                }
+                    
+                Fpdf::AddPage();
+                Fpdf::SetFont('Arial','B',15);
+                // Movernos a la derecha
+                Fpdf::Cell(80);
+                // Título
+                Fpdf::Cell(30,10,utf8_decode($template['titulo']),0,0,'C');
+                // Salto de línea
+                Fpdf::Ln(20);
+                Fpdf::SetFont('Arial','B',12);
+                Fpdf::Multicell(0,8, utf8_decode($resultado));
+                $cod = date('Y-m-d') . '_' . date('B');
+                $user = Auth::user()->name;
+                $nombre = $user.'_template_'.$cod.'.pdf';
+                $ruta = 'pdfs/'.$nombre;
+                Fpdf::Output($ruta);
+
+                $nota = new Nota();
+                $nota->templates_id = $id;
+                $nota->user_id = Auth::user()->id;
+                $nota->data = $data;
+                $nota->pdf = $nombre;
+                $nota->save();
+                     
+                return Redirect::to('/home')->with('msj', 'El PDF se ha guardado correctamente');
+    
+            } else {
+                
+                return Redirect::to('/home')->with('msj', 'Ha ocurrido un problema al guardar el pdf');
+            }
+            
+        } else {
+            
+            return Redirect::to('/home')->with('msj', 'Ha ocurrido un problema al guardar el pdf');
+        }
     }
 
     /**
@@ -81,34 +133,9 @@ class TemplateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id)
+    public function show($id)
     {
         //
-        // $template = Template::where('id', $id)->get();
-        // // $cuerpo_template = Template::where('id', $id)->get('cuerpo');
-        // // $cuerpo = explode('</^([a-z]-?){1,}>', $cuerpo_template->cuerpo);
-        // return view('plantillas.usarTemplate', ['template' => $template]);
-        $inputNombre = "<input id=\"nombre\" type=\"text\" name=\"nombre\" value=\"Nombre\">";
-            $inputFecha = "<input id=\"fecha\" type=\"text\" name=\"fecha\" value=\"Fecha del evento\">";
-            $inputLugar = "<input id=\"lugar\" type=\"text\" name=\"lugar\" value=\"Lugar del evento\">";
-            $inputHora = "<input id=\"hora\" type=\"text\" name=\"hora\" value=\"Hora del evento\">";
-
-            $template = Template::find($id);
-
-            if (!is_null($template)){
-
-                $resultado = str_replace ( "{{nombre}}", $inputNombre, $template['cuerpo']);
-                $resultado = str_replace ( "{{fecha}}", $inputFecha, $resultado);
-                $resultado = str_replace ( "{{lugar}}", $inputLugar, $resultado);
-                $resultado = str_replace ( "{{hora}}", $inputHora, $resultado);
-
-                return View ('plantillas.template', ['texto' => $resultado, 'id' => $id]);
-            }
-
-            else {
-
-                return response('Plantilla no encontrada', 404);
-            }
     }
 
     /**
@@ -153,7 +180,6 @@ class TemplateController extends Controller
     {
         $titulo = 'Listado de Invitaciones';
         $resultados = Template::where('categoria', 'Invitacion')->paginate(4);
-
         //return view('plantillas.invitaciones.listado', ['invitaciones' => $invitaciones]);
         return view('plantillas.listadoCategoria', ['titulo' => $titulo,'resultados' => $resultados]);
     }
@@ -166,7 +192,6 @@ class TemplateController extends Controller
     {
         $titulo = 'Listado de Reclamos';
         $resultados = Template::where('categoria', 'Reclamo')->paginate(4);
-
         return view('plantillas.listadoCategoria', ['titulo' => $titulo,'resultados' => $resultados]);
     }
     
@@ -178,7 +203,6 @@ class TemplateController extends Controller
     {
         $titulo = 'Listado de Solicitudes';
         $resultados = Template::where('categoria', 'Solicitud')->paginate(4);
-
         return view('plantillas.listadoCategoria', ['titulo' => $titulo,'resultados' => $resultados]);
     }
     
@@ -190,47 +214,90 @@ class TemplateController extends Controller
     {
         $titulo = 'Listado de Felicitaciones';
         $resultados = Template::where('categoria', 'Felicitacion')->paginate(4);
-
         return view('plantillas.listadoCategoria', ['titulo' => $titulo,'resultados' => $resultados]);
     }
-
-    /**
-     * Genera PDF del Template para imprimir
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function generaPDF(Request $request)
+    
+    public function getNotas(){
+        $user = Auth::user()->id;
+        $notas = Nota::where('user_id', $user)->get();
+        return View ('plantillas.notas', ['notas' => $notas]);
+    }
+    
+    public function imprimirPDF($id){
+        
+        $nota = Nota::find($id);
+        if (!is_null($nota)){ 
+            $ruta = 'pdfs/'.$nota['pdf'];
+            header('Content-type: application/pdf'); 
+            header('Content-Disposition: inline; filename="'.$nota['pdf'].'"'); 
+            readfile($ruta);  
+            exit;
+        } 
+        else {
+            return Redirect::to('/home')->with('msj', 'Ha ocurrido un problema recuperar la nota');
+        }
+    }
+    
+    public function getTemplate(Request $request, $id)
     {
-        //
-        $nombre = $request->input('nombre');
-        $fecha = $request->input('fecha');
-        $lugar = $request->input('lugar');
-        $hora = $request->input('hora');
-        $path = explode('/', $request->path());
-        $id = $path[1];
+        if ($request->isMethod("post")){
             
-        $template = Template::find($id);
+            $template = Template::find($id);
+            
+             if (!is_null($template)){
+                     
+                preg_match_all('/\{\{([a-zA-Z0-9]+)\}\}/', $template['cuerpo'], $coincidencias);
+                $resultado = $template['cuerpo'];
+                     
+                for ($i = 0; $i < count($coincidencias[0]); $i++) {
+                    $aux = $request->input($coincidencias[1][$i]);
+                    $resultado = str_replace ($coincidencias[0][$i], $aux, $resultado);
+                }
 
-        $resultado = str_replace ( "{{nombre}}", $nombre, $template['cuerpo']);
-        $resultado = str_replace ( "{{fecha}}", $fecha, $resultado);
-        $resultado = str_replace ( "{{lugar}}", $lugar, $resultado);
-        $resultado = str_replace ( "{{hora}}", $hora, $resultado);
 
-        Fpdf::AddPage();
-        Fpdf::SetFont('Arial','B',15);
-        // Movernos a la derecha
-        Fpdf::Cell(80);
-        // Título
-        Fpdf::Cell(30,10,utf8_decode($template['titulo']),0,0,'C');
-        // Salto de línea
-        Fpdf::Ln(20);
-        Fpdf::SetFont('Arial','B',12);
-        Fpdf::Multicell(0,8, utf8_decode($resultado));
-        $nombre = 'template'.$template['id'].'.pdf';
-        $ruta = 'pdfs/'.$nombre;
-        //Fpdf::Output($ruta);
-        Fpdf::Output();
-        exit;
+                Fpdf::AddPage();
+                Fpdf::SetFont('Arial','B',15);
+                // Movernos a la derecha
+                Fpdf::Cell(80);
+                // Título
+                Fpdf::Cell(30,10,utf8_decode($template['titulo']),0,0,'C');
+                // Salto de línea
+                Fpdf::Ln(20);
+                Fpdf::SetFont('Arial','B',12);
+                Fpdf::Multicell(0,8, utf8_decode($resultado));
+                Fpdf::Output();
+                
+                exit;
+
+            }
+            else {
+                return response('Plantilla no encontrada', 404);
+            }
+
+
+        } else {
+            
+            $template = Template::find($id);
+
+            if (!is_null($template)){
+
+                preg_match_all('/\{\{([a-zA-Z0-9]+)\}\}/', $template['cuerpo'], $coincidencias);
+                $resultado = $template['cuerpo'];
+                for ($i = 0; $i < count($coincidencias[0]); $i++) {
+                    $input = "<input id=\"".$coincidencias[1][$i]."\" type=\"text\" name=\"".$coincidencias[1][$i]."\" value=\"".$coincidencias[1][$i]."\">";
+                    $resultado = str_replace ($coincidencias[0][$i], $input, $resultado);
+                }
+
+                return View ('plantillas.template', ['texto' => $resultado, 'id' => $id]);
+                
+
+            }
+
+            else {
+
+                return response('Plantilla no encontrada', 404);
+            }
+        }
+
     }
 }

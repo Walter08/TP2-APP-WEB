@@ -1,0 +1,64 @@
+body {
+    /* Fijamos un color de fondo para que se muestre mientras se está
+    cargando la imagen de fondo o si hay problemas para cargarla  */
+    background-color: #2c3e50;
+    /* Ubicación de la imagen */
+    #background-image: url(/img/278.jpg);
+    background-image: url(/img/chalkboard.jpg);
+    /* Nos aseguramos que la imagen de fondo este centrada vertical y
+    horizontalmente en todo momento */
+    background-position: center center;
+    /* La imagen de fondo no se repite */
+    background-repeat: no-repeat;
+    /* La imagen de fondo está fija en el viewport, de modo que no se mueva cuando
+     la altura del contenido supere la altura de la imagen. */
+    background-attachment: fixed;
+    /* La imagen de fondo se reescala cuando se cambia el ancho de ventana
+     del navegador */
+    background-size: cover;
+}
+#container {
+  display: table;
+  padding-top: 5%;
+  width: 100%;
+}
+.content {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 200%;
+  font-weight: bold;
+  color: #17C8F4;
+}
+.funny{
+  color: #17C8F4;  
+}
+/*
+@font-face {
+   font-family: "Nickainley-Normal";
+   font-style: normal;
+   font-weight: normal;
+   src: url(../fonts/Nickainley-Normal.otf);
+}
+*/
+blockquote {
+  display: block;
+  max-width: 480px;
+  margin: 0px auto;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.3);  
+  color: #e1e1e1;
+  font-family: "Kotta One", serif;
+  #font-size: 22px;
+  font-size: 100%;
+  line-height: 28px;
+}
+@media only screen and (max-width: 767px) {
+    .content {font-size: 180%;}
+}
+@media only screen and (max-width: 567px) {
+    .content {font-size: 160%;}
+}
+@media only screen and (max-width: 450px) {
+    .content {font-size: 140%;}
+}

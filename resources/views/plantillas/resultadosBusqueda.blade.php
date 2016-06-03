@@ -1,14 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Categorias de Plantillas')
+@section('title', 'Sugerencia de Plantillas')
 @section('content')
+
 <div class="container">
     <div class="row">
-        <div class="col-md-3 col-md-offset-1">
+        <!--<div class="col-md-3 col-md-offset-1">-->
             <!-- Incluyo panel izquierdo con las categorias -->
-            @include('menu_categorias')
-        </div>
-        <div class="col-md-7">
-            <div class="panel panel-default">
+            <!--@include('menu_categorias')-->
+        <!--</div>-->
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-info">
                 <div class="panel-heading">{{$titulo}}</div>
                 <div class="panel-body">
                     @foreach ($resultados as $r)
@@ -22,10 +23,10 @@
                                 </h4>
                               </div>
                               <div class="panel-body">
-                                <!-- <div class="texto" id="{{$r->id}}">
+                                <!--<div class="texto" id="{{$r->id}}">
                                   <div class="convertir" style="visibility: hidden;"> {{$r -> cuerpo}} </div>
                                   <div class="widget" id="{{$r->id}}"></div>
-                                </div> -->
+                                </div>-->
                                 <!-- Modal -->
                                 <?php $d = 'myModal'.$r->id ?>
                                 <div id="{{$d}}" class="modal fade" role="dialog">
@@ -37,7 +38,7 @@
                                         <h4 class="modal-title"> {{ $r->titulo }}</h4>
                                       </div>
                                       <div class="modal-body">
-                                        <p class="texto-modal">{{$r->cuerpo}}</p>
+                                        <p>{{$r->cuerpo}}</p>
                                       </div>
                                       <div class="modal-footer">
                                         <?php $url = 'template/'.$r->id ?>
@@ -50,7 +51,6 @@
                             </div>
                     @endforeach
                 </div>
-                {!! $resultados->render() !!}
             </div>
 
         </div>

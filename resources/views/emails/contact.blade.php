@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
 </head>
 <body>
-	<p><stron>Mensaje: </stron>{!!$mensaje!!}</p>
-	<p><strong>Por favor, no responda este correo. Gracias</strong></p>
+	<!--<p><strong>Mensaje: </strong></p>-->
+     <?php echo $data ?> 
+	<br/><br/><p><strong>Por favor, no responda este correo. Gracias</strong></p>
 </body>
 </html>
